@@ -130,9 +130,7 @@ impl GameStageState<Ready> {
         GameStageState { _state: Playing, material: self.material,}
     }
     fn update(self, _keystate: &KeyState) -> ReadyEndState {
-        let command = browser::find_html_element_by_id("command_text").unwrap();
-        let command = command.dyn_ref::<HtmlInputElement>().unwrap();
-        if command.value() == "s".to_string() {
+        if _keystate.is_pressed("Space") {
             return ReadyEndState::Complete(self.start_running());
         }
         ReadyEndState::Continue(self)
@@ -155,11 +153,6 @@ struct Playing;
 impl GameStageState<Playing> {
     fn update(mut self, _keystate: &KeyState) -> RunningEndState {
 
-        // TEXT INPUT -> WEB-SYS -> VALUE
-        let command = browser::find_html_element_by_id("command_text").unwrap();
-        let command = command.dyn_ref::<HtmlInputElement>().unwrap();
-
-        // counter
         self.material.frame +=1;
         let mut _current_velocity:Point = self.material.knight.velocity();
 
@@ -202,22 +195,18 @@ impl GameStageState<Playing> {
             );
         }
         
-        // input 'l' key -> Rung to Left Side
-        if command.value() == "l".to_string() {
+        if _keystate.is_pressed("ArrowLeft") {
             self.material.knight.run(Point{x: -RUNNING_SPEED, y:0});
             _current_velocity = self.material.knight.velocity();
         }
-        // input 'r' key -> Run to Right Side
-        if command.value() == "r".to_string() {
+        if _keystate.is_pressed("ArrowRight") {
             self.material.knight.run(Point{x: RUNNING_SPEED, y:0});
             _current_velocity = self.material.knight.velocity();
         }
-        // input 'j' key -> JUMP
-        if command.value() == "j".to_string() {
+        if _keystate.is_pressed("ArrowUp") {
             self.material.knight.jump();
         }
-        // input 'a' key -> ATTACK
-        if command.value() == "a".to_string() {
+        if _keystate.is_pressed("Space") {
             self.material.knight.attack();
             self.material.parwns.retain(|parwn| !self.material.knight.attacking_box().intersects(&parwn.bounding_box(PARWN_WIDTH, PARWN_HEIGHT)));
             self.material.rooks.retain(|rook| !self.material.knight.attacking_box().intersects(&rook.bounding_box(ROOK_WIDTH, ROOK_HEIGHT)));
@@ -347,54 +336,16 @@ impl From<RunningEndState> for GameStageStateMachine {
 struct GameOver;
 impl GameStageState<GameOver> {
     fn update(self, _keystate: &KeyState) -> GameOverEndState {
-        let command = browser::find_html_element_by_id("command_text").unwrap();
-        let command = command.dyn_ref::<HtmlInputElement>().unwrap();
-        if command.value() == "s".to_string() {
-            GameOverEndState::Complete(
-                GameStageState {
-                    _state: Ready,
-                    material: Material {
-                        frame: 10,
-                        count_bishops: 1,
-                        knight: Knight::new(
-                            Point { x: KNIGHT_X, y: FLOOR_HEIGHT },
-                            Point { x: RUNNING_SPEED, y: 0 }
-                        ),
-                        parwns: vec![
-                            Parwn::new(
-                                Point { x: PARWN1_X, y: FLOOR_HEIGHT },
-                                Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
-                            ),
-                            Parwn::new(
-                                Point { x: PARWN2_X, y: FLOOR_HEIGHT },
-                                Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
-                            ),
-                        ],
-                        bishops: vec![
-                            Bishop::new(
-                                Point { x: BISHOP_X, y: BISHOP_Y},
-                                Point { x: -RUNNING_SPEED, y: 0}
-                            ),
-                        ],
-                        shots: vec![
-                        ],
-                        fires: vec![
-                        ],
-                        rooks: vec![
-                            Rook::new(
-                                Point { x: ROOK_X, y: ROOK_Y},
-                                Point { x: -RUNNING_SPEED, y: 0 }
-                            ),
-                        ],
-                        ornament: Ornament::new(
-                            Point { x: ORNAMENT_X, y: ORNAMENT_Y },
-                            Point { x: -RUNNING_SPEED, y: 0 }
-                        ),
-                    }
-                }
-            )
+        if _keystate.is_pressed("Space") {
+            GameOverEndState::Complete(self.new_game())
         } else {
             GameOverEndState::Continue(self)
+        }
+    }
+    fn new_game(self) -> GameStageState<Ready>{
+        GameStageState {
+            _state: Ready,
+            material: Material::reset(self.material)
         }
     }
 }
@@ -521,7 +472,8 @@ pub trait Piece {
             y: _y,
             width: width,
             height: height,
-            character: BRANK,
+            //character: BRANK,
+            character: ["*****","******","******"],
             font_size: FONT_L,
             font_align: FONT_CENTER,
         }
@@ -545,6 +497,49 @@ pub struct Material {
     ornament: Ornament,
 }
 impl Material {
+    fn new()->Self { 
+        Material {
+            frame: 10,
+            count_bishops: 1,
+            knight: Knight::new(
+                Point { x: KNIGHT_X, y: FLOOR_HEIGHT },
+                Point { x: RUNNING_SPEED, y: 0 }
+            ),
+            parwns: vec![
+            /*
+                Parwn::new(
+                    Point { x: PARWN1_X, y: FLOOR_HEIGHT },
+                    Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
+                ),
+                Parwn::new(
+                    Point { x: PARWN2_X, y: FLOOR_HEIGHT },
+                    Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
+                ),
+            */
+            ],
+            bishops: vec![
+                Bishop::new(
+                    Point { x: BISHOP_X, y: BISHOP_Y},
+                    Point { x: -RUNNING_SPEED, y: 0}
+                ),
+            ],
+            shots: vec![],
+            fires: vec![],
+            rooks: vec![
+                Rook::new(
+                    Point { x: ROOK_X, y: ROOK_Y},
+                    Point { x: -RUNNING_SPEED, y: 0 }
+                ),
+            ],
+            ornament: Ornament::new(
+                Point { x: ORNAMENT_X, y: ORNAMENT_Y },
+                Point { x: -RUNNING_SPEED, y: 0 }
+            ),
+        }
+    }
+    fn reset(material: Self) -> Self {
+        Material::new()
+    }
     fn draw(&self, renderer: &Renderer) {
         self.ornament.draw(renderer);
         self.knight.draw(renderer);
@@ -570,48 +565,9 @@ impl Material {
 impl Game for GameStage {
     async fn initialize(&self) -> Result<Box<dyn Game>> {
         log!("START");
-        match self.machine {
-            None => {
-                let machine = GameStageStateMachine::new(Material {
-                    frame: 0,
-                    count_bishops: 1,
-                    knight: Knight::new(
-                        Point { x: KNIGHT_X, y: FLOOR_HEIGHT },
-                        Point { x: RUNNING_SPEED, y: 0}
-                    ),
-                    parwns: vec![
-                        /*
-                        Parwn::new(
-                            Point { x: PARWN1_X, y: FLOOR_HEIGHT },
-                            Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
-                        ),
-                        Parwn::new(
-                            Point { x: PARWN2_X, y: FLOOR_HEIGHT },
-                            Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
-                        ),
-                        */
-                    ],
-                    bishops: vec![
-                        /*
-                        Bishop::new(
-                            Point { x: BISHOP_X, y: BISHOP_Y},
-                            Point { x: -RUNNING_SPEED, y: 0}
-                        ),
-                        */
-                    ],
-                    shots: vec![],
-                    fires: vec![],
-                    rooks: vec![
-                        Rook::new(
-                            Point { x: ROOK_X, y: ROOK_Y},
-                            Point { x: -RUNNING_SPEED, y: 0 }
-                        ),
-                    ],
-                    ornament: Ornament::new(
-                        Point { x: ORNAMENT_X, y: ORNAMENT_Y },
-                        Point { x: -RUNNING_SPEED, y: 0 }
-                    ),
-                });
+        match &self.machine {
+            _none => {
+                let machine = GameStageStateMachine::new(Material::new());
                 Ok(Box::new(GameStage {
                     machine: Some(machine),
                 }))
