@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>My First Webassemly</title>
+<link rel="stylesheet" href="data:text/css;base64,Ym9keXsKCW1hcmdpbjowOwoJcGFkZGluZzowOwogICAgYmFja2dyb3VuZC1jb2xvcjogYmxhY2s7Cn0KCmNhbnZhcyB7CiAgICBib3JkZXI6IDJweCBzb2xpZCBncmVlbjsKICAgIGJhY2tncm91bmQtY29sb3I6IGJsYWNrOwp9CmNhbnZhczpmb2N1c3sKICAgIG91dGxpbmU6IDFweCBzb2xpZCBncmVlbjsKfQpkaXYuZmxleGJveC1jb250YWluZXIgewogIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47CiAgZGlzcGxheTogZmxleDsKICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsKICBwYWRkaW5nOiA1cHg7CiAgbWFyZ2luLWxlZnQ6IGF1dG87CiAgbWFyZ2luLXJpZ2h0OiBhdXRvOwp9CgpkaXYuaXRlbV8xIHsKICBtYXJnaW46IDEwcHggMzBweDsKICBhbGlnbi1zZWxmOiBjZW50ZXI7Cn0KCmRpdi5pdGVtXzIgewogIG1hcmdpbjogMHB4IDBweDsKICBhbGlnbi1zZWxmOiBjZW50ZXI7Cn0KCmlucHV0W3R5cGU9InRleHQiXTpmb2N1cyB7CiAgICBvdXRsaW5lOiAycHggc29saWQgIzAwMDsKfQpkaXYuaXRlbV8yIGlucHV0IHsKICAgIGJhY2tncm91bmQtY29sb3I6IGJsYWNrOwogICAgcGFkZGluZzogMHB4IDE1cHg7CiAgICBmb250LXNpemU6IDI0cHg7CiAgICBib3JkZXI6IDFweCBzb2xpZCBncmVlbjsKICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgICBjb2xvcjogZ3JlZW47CiAgICB3aWR0aDogNTUwcHg7CiAgICBsZXR0ZXItc3BhY2luZzogMXB4OwogICAgYm9yZGVyOiBub25lOwogICAgb3V0bGluZTogbm9uZTsKICAgIGJhY2tncm91bmQ6ICMwMDEyMTI7Cn0KZGl2Lml0ZW1fMiBzcGFuIHsKICAgIGZvbnQtc2l6ZTogMjRweDsKICAgIGNvbG9yOiBncmVlbjsKfQoKYnV0dG9uIHsKICAgIGZvbnQtZmFtaWx5OiAnS2VuIEZ1dHVyZSc7CiAgICBiYWNrZ3JvdW5kOiAtNzJweCAtNjBweCB1cmwoJ0J1dHRvbi5zdmcnKTsKICAgIGJvcmRlcjogbm9uZTsKICAgIHdpZHRoOiA4MHB4OwogICAgaGVpZ2h0OiAzM3B4Owp9CgpidXR0b246aG92ZXIgewogICAgYmFja2dyb3VuZDogLTE1OHB4IC02MHB4IHVybCgnQnV0dG9uLnN2ZycpOwp9CgpidXR0b246YWN0aXZlIHsKICAgIGJhY2tncm91bmQ6IC0yNDRweCAtNjBweCB1cmwoJ0J1dHRvbi5zdmcnKTsKfQ==" type="text/css" media="screen">
+  <script type="module" crossorigin src="/assets/index-B6z9JdzT.js"></script>
+</head>
+<body onload="document.getElementById('command').focus()">
+    <div class = "flexbox-container">
+        <div class="item_1">
+            <canvas id="canvas" tabindex="0" height="450" width="600">
+                Your browser does not support the Canvas.
+            </canvas>
+        </div>
+        <div class="item_2">
+            <span>&gt; </span><input type="text" id="command" required minlength="4" maxlength="8" size="60"  value="" tabindex="1" autocomplete="off"/>
+            <input type="hidden" id="command_text" value="" />
+        </div>
+    </div>
+</body>
+<script>
+    const command_input = document.getElementById("command");
+    const command_text =  document.getElementById("command_text");
+    command_input.addEventListener("keydown", (e) => {
+        if(e.key === "Enter") {
+            init(set_init);
+        }
+    })
+    function init(callback){
+        command_text.value = command_input.value;
+        setTimeout(function(){
+            command_input.value = '';
+            command_text.value = '';
+            callback();
+        },100);
+    }
+    function set_init(){
+        command_text.value = '';
+    }
+    //    document.getElementById('canvas').focus();
+</script>
+</html>

@@ -1,0 +1,68 @@
+body{
+	margin:0;
+	padding:0;
+    background-color: black;
+}
+
+canvas {
+    border: 2px solid green;
+    background-color: black;
+}
+canvas:focus{
+    outline: 1px solid green;
+}
+div.flexbox-container {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.item_1 {
+  margin: 10px 30px;
+  align-self: center;
+}
+
+div.item_2 {
+  margin: 0px 0px;
+  align-self: center;
+}
+
+input[type="text"]:focus {
+    outline: 2px solid #000;
+}
+div.item_2 input {
+    background-color: black;
+    padding: 0px 15px;
+    font-size: 24px;
+    border: 1px solid green;
+    box-sizing: border-box;
+    color: green;
+    width: 550px;
+    letter-spacing: 1px;
+    border: none;
+    outline: none;
+    background: #001212;
+}
+div.item_2 span {
+    font-size: 24px;
+    color: green;
+}
+
+button {
+    font-family: 'Ken Future';
+    background: -72px -60px url('Button.svg');
+    border: none;
+    width: 80px;
+    height: 33px;
+}
+
+button:hover {
+    background: -158px -60px url('Button.svg');
+}
+
+button:active {
+    background: -244px -60px url('Button.svg');
+}

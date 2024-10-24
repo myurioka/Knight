@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>My First Webassemly</title>
+<link rel="stylesheet" href="./static/main.css" type="text/css" media="screen">
+<script type="module" src="./src/main.js"></script>
+</head>
+<body onload="document.getElementById('command').focus()">
+    <div class = "flexbox-container">
+        <div class="item_1">
+            <canvas id="canvas" tabindex="0" height="450" width="600">
+                Your browser does not support the Canvas.
+            </canvas>
+        </div>
+        <div class="item_2">
+            <span>&gt; </span><input type="text" id="command" required minlength="4" maxlength="8" size="60"  value="" tabindex="1" autocomplete="off"/>
+            <input type="hidden" id="command_text" value="" />
+        </div>
+    </div>
+</body>
+<script>
+    const command_input = document.getElementById("command");
+    const command_text =  document.getElementById("command_text");
+    command_input.addEventListener("keydown", (e) => {
+        if(e.key === "Enter") {
+            init(set_init);
+        }
+    })
+    function init(callback){
+        command_text.value = command_input.value;
+        setTimeout(function(){
+            command_input.value = '';
+            command_text.value = '';
+            callback();
+        },100);
+    }
+    function set_init(){
+        command_text.value = '';
+    }
+    //    document.getElementById('canvas').focus();
+</script>
+</html>
