@@ -159,7 +159,7 @@ pub mod knight {
             match (self, event) {
                 (KnightStateMachine::Idle(state), Event::Update) => state.update().into(),
                 (KnightStateMachine::Idle(state), Event::Run(velocity)) => state.run(velocity).into(),
-                (KnightStateMachine::Idle(state), Event::Jump) => state.jump().into(),
+                //(KnightStateMachine::Idle(state), Event::Jump) => state.jump().into(),
                 (KnightStateMachine::Idle(state), Event::Knocked) => state.knocked().into(),
                 (KnightStateMachine::Idle(state), Event::Attack) => state.attack().into(),
                 (KnightStateMachine::Running(state), Event::Run(velocity)) => state.run(velocity).into(),
@@ -277,12 +277,14 @@ pub mod knight {
                 _state: Running{},
             }
         }
+        /*
         pub fn jump(self) -> KnightState<Jumping> {
             KnightState {
                 context: self.context.jump(),
                 _state: Jumping {},
             }
         }
+        */
         pub fn knocked(self) -> KnightState<Knocked> {
             KnightState {
                 context: self.context.knocked(),
@@ -349,7 +351,8 @@ pub mod knight {
     pub struct Jumping;
     pub enum JumpingEndState {
         Jumping(KnightState<Jumping>),
-        Landing(KnightState<Running>),
+        //Landing(KnightState<Running>),
+        Landing(KnightState<Idle>),
         Knocked(KnightState<Knocked>),
         Attacking(KnightState<Attacking>),
     }
@@ -361,12 +364,20 @@ pub mod knight {
             }
             JumpingEndState::Jumping(self)
         }
+        pub fn land(self) -> KnightState<Idle> {
+            KnightState {
+                context: *self.context(),
+                _state: Idle {},
+            }
+        }
+        /*
         pub fn land(self) -> KnightState<Running> {
             KnightState {
                 context: *self.context(),
                 _state: Running {},
             }
         }
+        */
         pub fn knocked(self) -> KnightState<Knocked> {
             KnightState {
                 context: *self.context(),
