@@ -11,11 +11,9 @@ Programming Retro Game in Rust & WebAssembly
 
 Defeat your enemies and reach the goal.
 
-  * INPUT 's' Key in Text Field & Enter: Start Game
-  * INPUT 'r' Key in Text Field & Enter: Go Right
-  * INPUT 'l' Key in Text Field & Enter: Go Left
-  * INPUT 'a' Key in Text Field & Enter: Attack
-  * INPUT 'j' Key in Text Field & Enter: Jump
+  * Left or Right key : Move left or right the Cart
+  * Up key : Jump
+  * Space key : Attack & Game Start
 
 ### Requirement
 

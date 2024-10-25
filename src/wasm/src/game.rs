@@ -23,6 +23,7 @@ use crate::{
 use web_sys::HtmlInputElement;
 
 /* <-- CONSTANT VALUE */
+const JUMP_HEIGHT: i16 = 275;
 const FLOOR_HEIGHT: i16 = 280;
 const STAGE_LEFT:i16 = 100;
 const STAGE_RIGHT:i16 = 1200;
@@ -203,7 +204,7 @@ impl GameStageState<Playing> {
             self.material.knight.run(Point{x: RUNNING_SPEED, y:0});
             _current_velocity = self.material.knight.velocity();
         }
-        if _keystate.is_pressed("ArrowUp") {
+        if _keystate.is_pressed("ArrowUp") && self.material.knight.state_machine.context().position.y > JUMP_HEIGHT {
             self.material.knight.jump();
         }
         if _keystate.is_pressed("Space") {
@@ -226,25 +227,25 @@ impl GameStageState<Playing> {
         // Bishop & Shot
         self.material.shots.retain(|shot| shot.position().y < FLOOR_HEIGHT);
   
-        if self.material.count_bishops == 1 && self.material.frame % BISHOP_TERM == 0 {
-            if self.material.bishops.len() == 1 {
-                self.material.bishops.remove(0);
-            } else { 
-                let _x = thread_rng().gen_range(0..5) * BISHOP_MOVE;
-                self.material.bishops.push(
-                    Bishop::new(
-                        Point { x: _x, y: BISHOP_Y},
-                        Point { x: - _current_velocity.x, y: 0}
-                    )
-                );
-/*
-                self.material.shots.push(
-                    Shot::new(
-                        Point { x: _x, y: BISHOP_Y - 20},
-                        Point { x: _current_velocity.x, y: SHOT_SPEED }
-                    )
-                );
-*/
+            if self.material.count_bishops == 1 && self.material.frame % BISHOP_TERM == 0 && self.material.count_bishops != 0{
+                if self.material.bishops.len() == 1 {
+                    self.material.bishops.remove(0);
+                } else { 
+                    let _x = thread_rng().gen_range(0..5) * BISHOP_MOVE;
+                    self.material.bishops.push(
+                        Bishop::new(
+                            Point { x: _x, y: BISHOP_Y},
+                            Point { x: - _current_velocity.x, y: 0}
+                        )
+                    );
+                /*
+                    self.material.shots.push(
+                        Shot::new(
+                            Point { x: _x, y: BISHOP_Y - 20},
+                            Point { x: _current_velocity.x, y: SHOT_SPEED }
+                        )
+                    );
+                */
             }
         }
         self.material.bishops.iter_mut().for_each(|bishop| {
@@ -552,9 +553,11 @@ impl Material {
         self.fires.iter().for_each(|fire| {
             fire.draw(renderer);
         });
-        self.bishops.iter().for_each(|bishop| {
-            bishop.draw(renderer);
-        });
+        if self.count_bishops != 0 {
+            self.bishops.iter().for_each(|bishop| {
+                bishop.draw(renderer);
+            });
+        }
         self.rooks.iter().for_each(|rook| {
             rook.draw(renderer);
         });
