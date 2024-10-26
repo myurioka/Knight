@@ -5,7 +5,6 @@ use futures::channel::{
     mpsc::{unbounded, UnboundedReceiver},
     //oneshot::channel,
 };
-//use serde::Deserialize;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::CanvasRenderingContext2d;

@@ -15,12 +15,7 @@ use shot::shot::*;
 use fire::fire::*;
 use ornament::ornament::*;
 use rook::rook::*;
-use wasm_bindgen::JsCast;
-use crate::{
-    browser,
-    engine::{Point, Game, KeyState, Rect, Renderer, FONT_L, FONT_S, FONT_CENTER, FONT_LEFT}
-};
-use web_sys::HtmlInputElement;
+use crate:: engine::{Point, Game, KeyState, Rect, Renderer, FONT_L, FONT_S, FONT_CENTER, FONT_LEFT};
 
 /* <-- CONSTANT VALUE */
 const JUMP_HEIGHT: i16 = 275;
@@ -50,9 +45,8 @@ const ROOK_HEIGHT: i16 = 180;
 const SHOT_SPEED:i16 = 1;
 const SHOT_WIDTH: i16 = 50;
 const SHOT_HEIGHT: i16 = 90;
-const FIRE_TERM:i16 = 200;
 const FIRE_SPEED:i16 = 1;
-const FIRE_WIDTH: i16 = 40;
+const FIRE_WIDTH: i16 = 80;
 const FIRE_HEIGHT: i16 = 40;
 const MESSAGE_X: i16 = 20;
 const MESSAGE_Y: i16 = 380;
@@ -227,25 +221,23 @@ impl GameStageState<Playing> {
         // Bishop & Shot
         self.material.shots.retain(|shot| shot.position().y < FLOOR_HEIGHT);
   
-            if self.material.count_bishops == 1 && self.material.frame % BISHOP_TERM == 0 && self.material.count_bishops != 0{
-                if self.material.bishops.len() == 1 {
-                    self.material.bishops.remove(0);
-                } else { 
-                    let _x = thread_rng().gen_range(0..5) * BISHOP_MOVE;
-                    self.material.bishops.push(
-                        Bishop::new(
-                            Point { x: _x, y: BISHOP_Y},
-                            Point { x: - _current_velocity.x, y: 0}
-                        )
-                    );
-                /*
-                    self.material.shots.push(
-                        Shot::new(
-                            Point { x: _x, y: BISHOP_Y - 20},
-                            Point { x: _current_velocity.x, y: SHOT_SPEED }
-                        )
-                    );
-                */
+        if self.material.count_bishops == 1 && self.material.frame % BISHOP_TERM == 0 && self.material.count_bishops != 0{
+            if self.material.bishops.len() == 1 {
+                self.material.bishops.remove(0);
+            } else { 
+                let _x = thread_rng().gen_range(0..5) * BISHOP_MOVE;
+                self.material.bishops.push(
+                    Bishop::new(
+                        Point { x: _x, y: BISHOP_Y},
+                        Point { x: - _current_velocity.x, y: 0}
+                    )
+                );
+                self.material.shots.push(
+                    Shot::new(
+                        Point { x: _x, y: BISHOP_Y - 20},
+                        Point { x: _current_velocity.x, y: SHOT_SPEED }
+                    )
+                );
             }
         }
         self.material.bishops.iter_mut().for_each(|bishop| {
@@ -257,14 +249,12 @@ impl GameStageState<Playing> {
 
         // Rook & Fire
         if self.material.rooks.len() > 0 && self.material.frame % ROOK_TERM == 0 && self.material.fires.len() == 0 {
-            /*
             self.material.fires.push(
                 Fire::new(
                     Point { x: self.material.rooks[0].position().x, y: self.material.rooks[0].position().y+40},
                     Point { x: - _current_velocity.x, y: 0 }
                 )
             );
-            */
         }
         self.material.rooks.iter_mut().for_each(|rook| {
             rook.run(Point{x: -_current_velocity.x, y: 0});
@@ -473,8 +463,7 @@ pub trait Piece {
             y: _y,
             width: width,
             height: height,
-            //character: BRANK,
-            character: ["*****","******","******"],
+            character: BRANK,
             font_size: FONT_L,
             font_align: FONT_CENTER,
         }
@@ -507,7 +496,6 @@ impl Material {
                 Point { x: RUNNING_SPEED, y: 0 }
             ),
             parwns: vec![
-            /*
                 Parwn::new(
                     Point { x: PARWN1_X, y: FLOOR_HEIGHT },
                     Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
@@ -516,7 +504,6 @@ impl Material {
                     Point { x: PARWN2_X, y: FLOOR_HEIGHT },
                     Point { x: -RUNNING_SPEED - PARWN_SPEED, y: 0 }
                 ),
-            */
             ],
             bishops: vec![
                 Bishop::new(
@@ -538,7 +525,7 @@ impl Material {
             ),
         }
     }
-    fn reset(material: Self) -> Self {
+    fn reset(_material: Self) -> Self {
         Material::new()
     }
     fn draw(&self, renderer: &Renderer) {

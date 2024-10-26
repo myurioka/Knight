@@ -15,7 +15,6 @@ pub mod parwn {
             self.state_machine
         }
         fn set_state_machine(&mut self, _state_machine: StateMachine) {
-            //self.state_machine = self.state_machine.update();
             self.state_machine = _state_machine.update();
         }
         fn draw(&self, renderer: &Renderer) {

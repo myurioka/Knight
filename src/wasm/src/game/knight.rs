@@ -350,7 +350,6 @@ pub mod knight {
     pub enum JumpingEndState {
         Jumping(KnightState<Jumping>),
         Landing(KnightState<Running>),
-        //Landing(KnightState<Idle>),
         Knocked(KnightState<Knocked>),
         Attacking(KnightState<Attacking>),
     }
@@ -366,12 +365,6 @@ pub mod knight {
             KnightState {
                 context: *self.context(),
                 _state: Running {},
-            }
-        }
-        pub fn knocked(self) -> KnightState<Knocked> {
-            KnightState {
-                context: *self.context(),
-                _state: Knocked {},
             }
         }
         pub fn attack(self) -> KnightState<Attacking> {
