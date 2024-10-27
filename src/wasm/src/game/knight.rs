@@ -10,8 +10,8 @@ pub mod knight {
     const BRANK: [&str; 3] = ["", "", ""];
     const GRAVITY: i16 = 2;
     const JUMPING_HEIGHT:i16 = 110;
-    const KNIGHT_WIDTH: i16 = 60;
-    const KNIGHT_HEIGHT: i16 = 40;
+    const KNIGHT_WIDTH: i16 = 30;
+    const KNIGHT_HEIGHT: i16 = 60;
     const ATTACK_WIDTH: i16 =  110;
     const ATTACK_HEIGHT: i16 = 60;
     const ATTACK_TIME: i16 = 8;
@@ -43,9 +43,6 @@ pub mod knight {
         pub fn jump(&mut self) {
             self.state_machine = self.state_machine.transition(Event::Jump);
         }
-        pub fn fall(&mut self) {
-            self.state_machine = self.state_machine.transition(Event::Fall);
-        }
         pub fn knocked(&mut self) {
             self.state_machine = self.state_machine.transition(Event::Knocked);
         }
@@ -57,8 +54,8 @@ pub mod knight {
         }
         pub fn bounding_box(&self) -> Rect {
             Rect {
-                x: self.state_machine.context().position.x,
-                y: self.state_machine.context().position.y,
+                x: self.state_machine.context().position.x - KNIGHT_WIDTH / 2,
+                y: self.state_machine.context().position.y - KNIGHT_HEIGHT / 2,
                 width: KNIGHT_WIDTH,
                 height: KNIGHT_HEIGHT,
                 character: BRANK,
@@ -153,7 +150,6 @@ pub mod knight {
         Run(Point),
         Update,
         Jump,
-        Fall,
         Knocked,
         Attack,
         Clear,

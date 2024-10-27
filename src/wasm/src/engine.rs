@@ -48,16 +48,6 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    pub fn rect(&self, rect: &Rect){
-        self.context.rect(
-            rect.x.into(),
-            rect.y.into(),
-            rect.width.into(),
-            rect.height.into(),
-        );
-        self.context.set_stroke_style(&JsValue::from(FONT_COLOR));
-        self.context.stroke();
-    }
     pub fn clear(&self, rect: &Rect) {
         self.context.clear_rect(
             rect.x.into(),
@@ -77,11 +67,6 @@ impl Renderer {
         for i in 0..rect.character.len() {
             let _ = self.context.fill_text(&rect.character[i], rect.x.into(), (&rect.y + (30 * i) as i16).into());
         }
-    }
-    pub fn rectline(&self, rect: &Rect) {
-        self.context.set_stroke_style(&JsValue::from(FONT_COLOR));
-        self.context.rect(rect.x as f64, rect.y as f64, rect.width as f64, rect.height as f64);
-        self.context.stroke();
     }
 }
 

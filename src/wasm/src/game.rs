@@ -6,7 +6,7 @@ mod shot;
 mod fire;
 mod rook;
 use rand::prelude::*;
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use async_trait::async_trait;
 use knight::knight::*;
 use parwn::parwn::*;
@@ -28,7 +28,7 @@ const ORNAMENT_X:i16 = STAGE_LEFT + 20;
 const ORNAMENT_Y:i16 = 400;
 const PARWN_SPEED:i16 = 1;
 const PARWN_WIDTH:i16 = 80;
-const PARWN_HEIGHT:i16 = 30;
+const PARWN_HEIGHT:i16 = 70;
 const PARWN1_X:i16 = 550;
 const PARWN2_X:i16 = 750;
 const BISHOP_X:i16 = 540;
@@ -456,8 +456,8 @@ pub trait Piece {
     }
     fn bounding_box(&self,width:i16, height:i16) -> Rect {
         let _state_machine:StateMachine = self.get_state_machine();
-        let _x = _state_machine.context().position.x;
-        let _y = _state_machine.context().position.y;
+        let _x = _state_machine.context().position.x - width / 2;
+        let _y = _state_machine.context().position.y - width / 2;
         Rect {
             x: _x,
             y: _y,
@@ -562,7 +562,7 @@ impl Game for GameStage {
                     machine: Some(machine),
                 }))
             }
-            Some(_) => Err(anyhow!("Error: Game is already initialized!")),
+            //Some(_) => Err(anyhow!("Error: Game is already initialized!")),
         }
     }
 
