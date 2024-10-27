@@ -21,8 +21,8 @@ pub mod bishop {
         fn draw(&self, renderer: &Renderer) {
             renderer.draw_text(
                 &Rect {
-                    x: self.state_machine.context().position.x,
-                    y: self.state_machine.context().position.y,
+                    x: self.state_machine.context().position.x + BISHOP_WIDTH / 2,
+                    y: self.state_machine.context().position.y + BISHOP_HEIGHT / 2,
                     width: BISHOP_WIDTH,
                     height: BISHOP_HEIGHT,
                     character: BISHOP_RUNNING,

@@ -1,7 +1,7 @@
 pub mod fire {
-    use crate::game::{Piece, Point, Renderer, Rect, FONT_L, FONT_CENTER, FIRE_WIDTH, FIRE_HEIGHT, State, StateMachine};
+    use crate::game::{Piece, Point, Renderer, Rect, FONT_L, FONT_LEFT, FIRE_WIDTH, FIRE_HEIGHT, State, StateMachine};
 
-    pub const FIRE_RUNNING: [&str; 3] = ["⌇⌇⌇", "", ""];
+    pub const FIRE_RUNNING: [&str; 3] = ["⌇⌇⌇","",""];
     pub struct Fire {
         pub state_machine: StateMachine,
     }
@@ -21,12 +21,12 @@ pub mod fire {
             renderer.draw_text(
                 &Rect {
                     x: self.state_machine.context().position.x,
-                    y: self.state_machine.context().position.y,
+                    y: self.state_machine.context().position.y + FIRE_HEIGHT / 2,
                     width: FIRE_WIDTH,
                     height: FIRE_HEIGHT,
                     character: FIRE_RUNNING,
                     font_size: FONT_L,
-                    font_align: FONT_CENTER,
+                    font_align: FONT_LEFT,
                 }
             );
         }

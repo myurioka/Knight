@@ -56,6 +56,15 @@ impl Renderer {
             rect.height.into(),
         );
     }
+    /*
+    pub fn draw_line(&self, rect: &Rect) {
+        self.context.set_stroke_style(&JsValue::from(FONT_COLOR));
+        self.context.begin_path();
+        self.context.rect(rect.x as f64, rect.y as f64, rect.width as f64, rect.height as f64);
+        self.context.stroke();
+        self.context.close_path();
+    }
+    */
     pub fn draw_text(&self, rect: &Rect) {
         self.context
             .set_fill_style(&JsValue::from(FONT_COLOR));

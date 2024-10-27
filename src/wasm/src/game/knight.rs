@@ -312,12 +312,14 @@ pub mod knight {
                 _state: Attacking {},
             }
         }
+        /*
         pub fn clear(self) -> KnightState<Clear> {
             KnightState {
                 context: self.context.clear(),
                 _state: Clear {},
             }
         }
+        */
     }
     #[derive(Copy, Clone)]
     pub struct Running;

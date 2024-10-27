@@ -1,5 +1,5 @@
 pub mod rook {
-    use crate::game::{Piece, Point, Renderer, Rect, Running, FONT_L, FONT_LEFT, ROOK_WIDTH, ROOK_HEIGHT, State, StateMachine, Context};
+    use crate::game::{Piece, Point, Renderer, Rect, FONT_L, FONT_LEFT, ROOK_WIDTH, ROOK_HEIGHT, State, StateMachine, Context};
 
 /* <-- CONSTANT VALUE */
     const ROOK: [&str; 3] = ["      (,,(,",
@@ -16,13 +16,7 @@ pub mod rook {
     impl Piece for Rook {
         fn new(position: Point, velocity: Point) -> Self {
             Rook {
-                state_machine: StateMachine::Running(State {
-                    context: Context {
-                        position: position,
-                        velocity: velocity,
-                    },
-                    _state: Running {},
-                })
+                state_machine: StateMachine::Running(State::new(position, velocity)),
             }
         }
         fn get_state_machine(&self) -> StateMachine {

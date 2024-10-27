@@ -20,7 +20,7 @@ pub mod parwn {
         fn draw(&self, renderer: &Renderer) {
             renderer.draw_text(
                 &Rect {
-                    x: self.state_machine.context().position.x,
+                    x: self.state_machine.context().position.x + PARWN_WIDTH / 2,
                     y: self.state_machine.context().position.y,
                     width: PARWN_WIDTH,
                     height: PARWN_HEIGHT,

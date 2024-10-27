@@ -32,14 +32,14 @@ const PARWN_HEIGHT:i16 = 70;
 const PARWN1_X:i16 = 550;
 const PARWN2_X:i16 = 750;
 const BISHOP_X:i16 = 540;
-const BISHOP_Y:i16 = 120;
+const BISHOP_Y:i16 = 100;
 const BISHOP_MOVE: i16 = 100;
 const BISHOP_WIDTH: i16 = 30;
-const BISHOP_HEIGHT: i16 = 70;
+const BISHOP_HEIGHT: i16 = 60;
 const BISHOP_TERM:i16 = 80;
 const ROOK_X:i16 = STAGE_RIGHT + 50;
 const ROOK_Y:i16 = 220;
-const ROOK_WIDTH: i16 = 300;
+const ROOK_WIDTH: i16 = 200;
 const ROOK_TERM: i16 = 230;
 const ROOK_HEIGHT: i16 = 180;
 const SHOT_SPEED:i16 = 1;
@@ -455,9 +455,10 @@ pub trait Piece {
         self.set_state_machine(_to_state_machine);
     }
     fn bounding_box(&self,width:i16, height:i16) -> Rect {
+
         let _state_machine:StateMachine = self.get_state_machine();
-        let _x = _state_machine.context().position.x - width / 2;
-        let _y = _state_machine.context().position.y - width / 2;
+        let _x = _state_machine.context().position.x;
+        let _y = _state_machine.context().position.y;
         Rect {
             x: _x,
             y: _y,
