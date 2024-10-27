@@ -18,6 +18,19 @@ pub mod fire {
             self.state_machine = _state_machine.update();
         }
         fn draw(&self, renderer: &Renderer) {
+            /*
+            renderer.rectline(
+                &Rect {
+                    x: self.state_machine.context().position.x,
+                    y: self.state_machine.context().position.y,
+                    width: FIRE_WIDTH,
+                    height: FIRE_HEIGHT,
+                    character: FIRE_RUNNING,
+                    font_size: FONT_L,
+                    font_align: FONT_CENTER,
+                }
+            );
+            */
             renderer.draw_text(
                 &Rect {
                     x: self.state_machine.context().position.x,

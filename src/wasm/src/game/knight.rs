@@ -43,10 +43,13 @@ pub mod knight {
         pub fn jump(&mut self) {
             self.state_machine = self.state_machine.transition(Event::Jump);
         }
+        pub fn fall(&mut self) {
+            self.state_machine = self.state_machine.transition(Event::Fall);
+        }
         pub fn knocked(&mut self) {
             self.state_machine = self.state_machine.transition(Event::Knocked);
         }
-        pub fn attack(&mut self) {
+        pub fn attack(&mut self ) {
             self.state_machine = self.state_machine.transition(Event::Attack);
         }
         pub fn clear(&mut self) {
@@ -140,6 +143,7 @@ pub mod knight {
         Idle(KnightState<Idle>),
         Running(KnightState<Running>),
         Jumping(KnightState<Jumping>),
+        Falling(KnightState<Falling>),
         Attacking(KnightState<Attacking>),
         Knocked(KnightState<Knocked>),
         Clear(KnightState<Clear>),
@@ -149,6 +153,7 @@ pub mod knight {
         Run(Point),
         Update,
         Jump,
+        Fall,
         Knocked,
         Attack,
         Clear,
@@ -159,7 +164,7 @@ pub mod knight {
             match (self, event) {
                 (KnightStateMachine::Idle(state), Event::Update) => state.update().into(),
                 (KnightStateMachine::Idle(state), Event::Run(velocity)) => state.run(velocity).into(),
-                //(KnightStateMachine::Idle(state), Event::Jump) => state.jump().into(),
+                (KnightStateMachine::Idle(state), Event::Jump) => state.jump().into(),
                 (KnightStateMachine::Idle(state), Event::Knocked) => state.knocked().into(),
                 (KnightStateMachine::Idle(state), Event::Attack) => state.attack().into(),
                 (KnightStateMachine::Running(state), Event::Run(velocity)) => state.run(velocity).into(),
@@ -171,6 +176,9 @@ pub mod knight {
                 (KnightStateMachine::Jumping(state), Event::Update) => state.update().into(),
                 (KnightStateMachine::Jumping(state), Event::Knocked) => state.update().into(),
                 (KnightStateMachine::Jumping(state), Event::Attack) => state.attack().into(),
+                (KnightStateMachine::Falling(state), Event::Update) => state.update().into(),
+                (KnightStateMachine::Falling(state), Event::Knocked) => state.update().into(),
+                (KnightStateMachine::Falling(state), Event::Attack) => state.attack().into(),
                 (KnightStateMachine::Attacking(state), Event::Update) => state.update().into(),
             _ => self,
             }
@@ -180,6 +188,7 @@ pub mod knight {
                 KnightStateMachine::Idle(state) => state.context(),
                 KnightStateMachine::Running(state) => state.context(),
                 KnightStateMachine::Jumping(state) => state.context(),
+                KnightStateMachine::Falling(state) => state.context(),
                 KnightStateMachine::Knocked(state) => state.context(),
                 KnightStateMachine::Attacking(state) => state.context(),
                 KnightStateMachine::Clear(state) => state.context(),
@@ -204,13 +213,28 @@ pub mod knight {
             KnightStateMachine::Jumping(state)
         }
     }
+    impl From<KnightState<Falling>> for KnightStateMachine{
+        fn from(state: KnightState<Falling>) -> Self {
+            KnightStateMachine::Falling(state)
+        }
+    }
     impl From<JumpingEndState> for KnightStateMachine {
         fn from(state: JumpingEndState) -> Self {
             match state {
                 JumpingEndState::Jumping(jumping) => jumping.into(),
-                JumpingEndState::Landing(landing) => landing.into(),
+                JumpingEndState::Ending(ending) => ending.into(),
                 JumpingEndState::Knocked(knocked) => knocked.into(),
                 JumpingEndState::Attacking(attack) => attack.into(),
+            }
+        }
+    }
+    impl From<FallingEndState> for KnightStateMachine {
+        fn from(state: FallingEndState) -> Self {
+            match state {
+                FallingEndState::Falling(falling) => falling.into(),
+                FallingEndState::Landing(landing) => landing.into(),
+                FallingEndState::Knocked(knocked) => knocked.into(),
+                FallingEndState::Attacking(attack) => attack.into(),
             }
         }
     }
@@ -265,9 +289,6 @@ pub mod knight {
              }
         }
         pub fn update(mut self) -> KnightState<Idle> {
-            if self.context.position.y < FLOOR_HEIGHT {
-                self.context.position.y += GRAVITY;
-            }            
             self.update_context();
             self
         }
@@ -308,9 +329,8 @@ pub mod knight {
         pub fn update(mut self)  -> KnightState<Running> {
             if self.context.position.y < FLOOR_HEIGHT {
                 self.context.position.y += GRAVITY;
-            } else {
-                self.update_context();
-            }
+            } 
+            self.update_context();
             self
         }
         pub fn run(self, velocity:Point) -> KnightState<Running> {
@@ -349,7 +369,7 @@ pub mod knight {
     pub struct Jumping;
     pub enum JumpingEndState {
         Jumping(KnightState<Jumping>),
-        Landing(KnightState<Running>),
+        Ending(KnightState<Falling>),
         Knocked(KnightState<Knocked>),
         Attacking(KnightState<Attacking>),
     }
@@ -357,11 +377,40 @@ pub mod knight {
         pub fn update(mut self) -> JumpingEndState {
             self.context.position.y -= GRAVITY;
             if self.context.position.y < JUMPING_HEIGHT {
-                return JumpingEndState::Landing(self.land())
-            }
+                return JumpingEndState::Ending(self.end());
+            };
             JumpingEndState::Jumping(self)
         }
-        pub fn land(self) -> KnightState<Running> {
+        fn end(self) -> KnightState<Falling> {
+            KnightState {
+                context: *self.context(),
+                _state: Falling {},
+            }
+        }
+        pub fn attack(self) -> KnightState<Attacking> {
+            KnightState {
+                context: self.context.attack(),
+                _state: Attacking {},
+            }
+        }
+    }
+    #[derive(Copy, Clone)]
+    pub struct Falling;
+    pub enum FallingEndState {
+        Falling(KnightState<Falling>),
+        Landing(KnightState<Running>),
+        Knocked(KnightState<Knocked>),
+        Attacking(KnightState<Attacking>),
+    }
+    impl KnightState<Falling> {
+        pub fn update(mut self) -> FallingEndState {
+            if self.context.position.y < FLOOR_HEIGHT {
+                self.context.position.y += GRAVITY;
+                return FallingEndState::Landing(self.land());
+            } 
+            FallingEndState::Falling(self)
+        }
+        fn land(self) -> KnightState<Running> {
             KnightState {
                 context: *self.context(),
                 _state: Running {},
@@ -391,10 +440,11 @@ pub mod knight {
         AttackingBack(KnightState<Running>),
     }
     impl KnightState<Attacking> {
+
         pub fn update(mut self) -> AttackingEndState {
             self.context.frame += 1;
             if self.context.frame > ATTACK_TIME {
-                self.context.frame = 0;
+                self.context.frame = 0; 
                 return AttackingEndState::AttackingBack(self.end());
             }
             AttackingEndState::Attacking(self)
@@ -402,7 +452,7 @@ pub mod knight {
         pub fn end(self) -> KnightState<Running> {
             KnightState {
                 context: *self.context(),
-                _state: Running {},
+                 _state: Running {},
             }
         }
     }
@@ -411,7 +461,7 @@ pub mod knight {
     pub struct KnightContext {
         pub frame: i16,
         pub position: Point,
-        pub velocity: Point,
+        pub velocity: Point
     }
     impl KnightContext {
         pub fn update(self) -> Self {
